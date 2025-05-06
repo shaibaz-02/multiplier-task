@@ -5,14 +5,22 @@
     <title>Homepage</title>
   </head>
   <body>
-    <%- include('./partials/nav') %>
-
-    <div class="container mt-3">
-      <div class="row row-cols-4">
-        <h1>welcome to the Homepage</h1>
+    <% if (locals.user) { %>
+      <%- include('./partials/nav') %>
+      <div class="container mt-3">
+        <div class="row row-cols-4 justify-content-center">
+          <div class="col text-center">
+            <h1>Welcome to the Homepage</h1>
+          </div>
+        </div>
       </div>
-    </div>
+    <% } else { %>
+      <script>
+        window.location.href='/user/signup';
+      </script>
+    <% } %>
 
     <%- include('./partials/scripts') %>
   </body>
 </html>
+
