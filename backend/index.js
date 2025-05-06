@@ -1,7 +1,6 @@
 const express=require('express')
 const app=express()
 const path=require('path')
-const multer=require('multer')
 const mongoose=require('mongoose')
 const cookiePaser = require("cookie-parser");
 const User = require("./models/user");
@@ -22,6 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookiePaser());
 app.use(checkForAuthenticationCookie("token"));
 app.use(express.static(path.resolve("./public")));
+
+
 app.use("/user", userRoute);
 app.get('/',(req,res)=>{
     res.render('home',{

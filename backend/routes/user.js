@@ -2,18 +2,20 @@ const { Router } = require("express");
 const User = require("../models/user");
 const multer=require('multer')
 const router = Router();
+const path = require("path");
 
 
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, "uploads/");
-//     },
-//     filename: function (req, file, cb) {
-//       const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
-//       cb(null, file.fieldname + "-" + uniqueName + path.extname(file.originalname));
-//     },
-//   });
-//   const upload = multer({ storage: storage });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.resolve(`./public/uploads/`));
+  },
+  filename: function (req, file, cb) {
+    const fileName = `${Date.now()}-${file.originalname}`;
+    cb(null, fileName);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 
 
@@ -46,15 +48,33 @@ router.get("/logout", (req, res) => {
   res.clearCookie("token").redirect("/user/signin");
 });
 
-router.post("/signup", async (req, res) => {
+// router.post("/signup", upload.single("coverImage"), async (req, res) => {
+//   const { fullName, email, password } = req.body;
+  
+//   await User.create({
+//     fullName,
+//     email,
+//     password,
+//     profileImageURL: `/uploads/${req.file.filename}`,
+//   });
+//   console.log("user signedup")
+//   return res.redirect("/user/signin");
+// });
+
+router.post("/signup", upload.single("photo"), async (req, res) => {
   const { fullName, email, password } = req.body;
+  const photo = req.file?.filename;
+
   await User.create({
     fullName,
     email,
     password,
+    profileImageURL: photo ? `/uploads/${photo}` : "/images/default.png",
   });
-  console.log("user signedup")
+
+  console.log("User signed up");
   return res.redirect("/user/signin");
 });
+
 
 module.exports = router;

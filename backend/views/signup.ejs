@@ -1,14 +1,67 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <%- include('./partials/head') %>
     <title>Signup</title>
+    <script>
+      function validateForm(event) {
+        event.preventDefault();
+        const formFields = document.querySelectorAll('.form-control');
+        formFields.forEach(field => field.classList.remove('is-invalid'));
+
+        let isValid = true;
+
+        const fullName = document.getElementById('fullName').value.trim();
+        if (fullName === '') {
+          document.getElementById('fullName').classList.add('is-invalid');
+          isValid = false;
+        }
+        const email = document.getElementById('exampleInputEmail1').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email === '') {
+          document.getElementById('exampleInputEmail1').classList.add('is-invalid');
+          isValid = false;
+        } else if (!emailRegex.test(email)) {
+          document.getElementById('exampleInputEmail1').classList.add('is-invalid');
+          isValid = false;
+        }
+        const password = document.getElementById('exampleInputPassword1').value.trim();
+        if (password === '') {
+          document.getElementById('exampleInputPassword1').classList.add('is-invalid');
+          isValid = false;
+        } else if (password.length < 6) {
+          document.getElementById('exampleInputPassword1').classList.add('is-invalid');
+          isValid = false;
+        }
+        const photo = document.getElementById('photo').files[0];
+        if (photo) {
+          const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+          if (!allowedTypes.includes(photo.type)) {
+            document.getElementById('photo').classList.add('is-invalid');
+            isValid = false;
+          }
+        } else {
+          document.getElementById('photo').classList.add('is-invalid');
+          isValid = false;
+        }
+        if (isValid) {
+          document.getElementById('signup-form').submit();
+        }
+      }
+    </script>
+    <style>
+      .is-invalid {
+        border-color: red !important;
+        background-color: #f8d7da !important;
+      }
+    </style>
   </head>
   <body>
     <%- include('./partials/nav') %>
 
     <div class="container mt-4">
-      <form action="/user/signup" method="post">
+      <form id="signup-form" action="/user/signup" method="post" enctype="multipart/form-data" onsubmit="validateForm(event)">
         <div class="mb-3">
           <label for="fullName" class="form-label">Full Name</label>
           <input
@@ -20,9 +73,7 @@
           />
         </div>
         <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label"
-            >Email address</label
-          >
+          <label for="exampleInputEmail1" class="form-label">Email address</label>
           <input
             type="email"
             name="email"
@@ -43,16 +94,16 @@
             id="exampleInputPassword1"
           />
         </div>
-        <!-- <div class="mb-3">
-            <label for="photo" class="form-label">Upload Photo</label>
-            <input
-              name="photo"
-              type="file"
-              class="form-control"
-              id="photo"
-              accept="image/*"
-            />
-          </div> -->
+        <div class="mb-3">
+          <label for="photo" class="form-label">Upload Image</label>
+          <input
+            type="file"
+            class="form-control"
+            id="photo"
+            name="photo" 
+            aria-describedby="photo"
+          />
+        </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
@@ -61,3 +112,5 @@
     <%- include('./partials/scripts') %>
   </body>
 </html>
+
+
