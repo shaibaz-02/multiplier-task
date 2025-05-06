@@ -1,0 +1,60 @@
+const { Router } = require("express");
+const User = require("../models/user");
+const multer=require('multer')
+const router = Router();
+
+
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, "uploads/");
+//     },
+//     filename: function (req, file, cb) {
+//       const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//       cb(null, file.fieldname + "-" + uniqueName + path.extname(file.originalname));
+//     },
+//   });
+//   const upload = multer({ storage: storage });
+
+
+
+router.get("/signin", (req, res) => {
+  return res.render("signin", {
+    user: req.user,
+  });
+});
+
+router.get("/signup", (req, res) => {
+  return res.render("signup", {
+    user: req.user,
+  });
+});
+
+router.post("/signin", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const token = await User.matchPasswordAndGenerateToken(email, password);
+    console.log("user signedin");
+    return res.cookie("token", token).redirect("/");
+  } catch (error) {
+    return res.render("signin", {
+      error: "Incorrect Email or Password",user: req.user,
+    });
+  }
+});
+
+router.get("/logout", (req, res) => {
+  res.clearCookie("token").redirect("/user/signin");
+});
+
+router.post("/signup", async (req, res) => {
+  const { fullName, email, password } = req.body;
+  await User.create({
+    fullName,
+    email,
+    password,
+  });
+  console.log("user signedup")
+  return res.redirect("/user/signin");
+});
+
+module.exports = router;
