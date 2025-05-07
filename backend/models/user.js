@@ -23,7 +23,11 @@ const userSchema = new Schema(
     profileImageURL: {
       type: String,
       required: false,
-    }
+    },
+    phone: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );

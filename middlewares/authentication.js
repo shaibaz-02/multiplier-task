@@ -19,3 +19,6 @@ function checkForAuthenticationCookie(cookieName) {
 module.exports = {
   checkForAuthenticationCookie,
 };
+<li class="nav-item">
+  <a class="nav-link" href="/user/signup">Create Account</a>
+</li>

@@ -20,6 +20,9 @@ const upload = multer({ storage: storage });
 
 
 router.get("/signin", (req, res) => {
+  if(req.user){
+    return res.redirect('/')
+  }
   return res.render("signin", {
     user: req.user,
   });
@@ -36,6 +39,7 @@ router.post("/signin", async (req, res) => {
   try {
     const token = await User.matchPasswordAndGenerateToken(email, password);
     console.log("user signedin");
+    res.cookie("token", token, { httpOnly: true, maxAge: 3600000 });
     return res.cookie("token", token).redirect("/");
   } catch (error) {
     return res.render("signin", {
@@ -48,18 +52,7 @@ router.get("/logout", (req, res) => {
   res.clearCookie("token").redirect("/user/signin");
 });
 
-// router.post("/signup", upload.single("coverImage"), async (req, res) => {
-//   const { fullName, email, password } = req.body;
-  
-//   await User.create({
-//     fullName,
-//     email,
-//     password,
-//     profileImageURL: `/uploads/${req.file.filename}`,
-//   });
-//   console.log("user signedup")
-//   return res.redirect("/user/signin");
-// });
+
 
 router.post("/signup", upload.single("photo"), async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -75,6 +68,7 @@ router.post("/signup", upload.single("photo"), async (req, res) => {
   console.log("User signed up");
   return res.redirect("/user/signin");
 });
+
 
 
 module.exports = router;

@@ -6,8 +6,12 @@ const cookiePaser = require("cookie-parser");
 const User = require("./models/user");
 const userRoute = require("./routes/user");
 
+//new code
+
+
 const {
     checkForAuthenticationCookie,
+    isAuthenticated,
   } = require("./middlewares/authentication");
   
 mongoose
@@ -24,11 +28,17 @@ app.use(express.static(path.resolve("./public")));
 
 
 app.use("/user", userRoute);
-app.get('/',(req,res)=>{
+app.get('/',checkForAuthenticationCookie('token'),isAuthenticated,(req,res)=>{
+  if(!req.user){
+    return res.redirect("/user/signin")
+  }
     res.render('home',{
         user: req.user,
     });
 })
+
+
+
 
 app.listen(8000,()=>{
     console.log("listening on the port 8000");
